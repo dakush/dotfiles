@@ -47,9 +47,9 @@ vim.cmd([[
 -------------------------------------------------------------------------------
 -- Set temporary directories location
 vim.opt.backup = true
-vim.opt.backupdir = HOME .. "/.cache/.vim-tmp,/var/tmp,/tmp"
-vim.opt.directory = HOME .. "/.cache/.vim-tmp,/var/tmp,/tmp"
-vim.opt.undodir = HOME .. "/.cache/.undo/,/tmp"
+vim.opt.backupdir = HOME .. "/.cache/.vim-tmp"
+vim.opt.directory = HOME .. "/.cache/.vim-tmp"
+vim.opt.undodir = HOME .. "/.cache/.undo/"
 
 vim.opt.syntax = "enable"
 vim.opt.autoread = true -- check if the file has changed before reloading it
