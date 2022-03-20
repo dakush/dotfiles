@@ -7,14 +7,15 @@ HOME = os.getenv("HOME")
 -------------------------------------------------------------------------------
 ---------------------------------- VISUAL -------------------------------------
 -------------------------------------------------------------------------------
-vim.cmd("colorscheme dracula")
-vim.cmd("hi Normal guibg=NONE ctermbg=NONE") -- Make the window transparent
 -- enable 24 bit color support if supported
 if vim.fn.has("termguicolors") == 1 then
 	vim.opt.termguicolors = true
 end
+vim.cmd("colorscheme dracula")
+vim.cmd("hi Normal guibg=NONE ctermbg=NONE") -- Make the window transparent
 vim.opt.cursorline = true -- Highlight the line with the cursor
 vim.opt.title = true -- vim.opt.terminal title
+vim.opt.showmode = false
 -- switch cursor to line when in insert mode, and block when not
 vim.opt.guicursor =
 	[[n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175]]
@@ -119,6 +120,7 @@ vim.opt.foldenable = false -- don't fold by default
 vim.opt.foldlevel = 1
 
 -- Misc
+-- vim.opt.laststatus = 3 -- Global statusline (i.e. not 1 statusline per buffer)
 vim.opt.diffopt = vim.opt.diffopt + "vertical,iwhite,internal,algorithm:patience,hiddenoff"
 vim.opt.so = 7 -- set 7 lines to the cursor's when moving vertical
 vim.opt.wildmode = "longest:list,full" -- complete files like a shell
@@ -134,3 +136,47 @@ vim.cmd("autocmd BufNewFile,BufRead * setlocal formatoptions-=cro")
 
 -- Required by nvim-cmp plugin for completion
 vim.opt.completeopt = "menu,menuone,noselect"
+
+-- Writer mode in and out
+-- Markdown in and out to have vim-markdown plugin concealing "markdown codes"
+vim.cmd([[
+  augroup markdown
+    autocmd!
+    autocmd FileType markdown setlocal conceallevel=2
+  augroup END
+]])
+
+-- Goyo in and out
+vim.g.goyo_width = 70
+vim.cmd([[
+  function! s:goyo_enter()
+    " Make vim non-transparent
+    " hi Normal guibg=#282A36 ctermbg=236
+    "hi Normal guibg=#C4C9CC ctermbg=33
+    colorscheme pencil
+    set background=light
+    set wrapmargin=0 " wrap lines when coming within n characters from side
+    set nolinebreak " vim.opt.soft wrapping
+    set nobreakindent " indent wrapped lines
+    set showbreak="" " show ellipsis at breaking
+    set textwidth=70
+    set scrolloff=999
+    set linespace=7
+    set spell spelllang=es_es
+  endfunction
+  function! s:goyo_leave()
+    colorscheme dracula
+    " Make the window transparent
+    hi Normal guibg=NONE ctermbg=NONE
+    set wrapmargin=8 " wrap lines when coming within n characters from side
+    set linebreak " vim.opt.soft wrapping
+    set breakindent " indent wrapped lines
+    set showbreak="❯❯ " " show ellipsis at breaking
+    set textwidth=120
+    set nospell
+    set scrolloff=7
+    set linespace=0
+  endfunction
+  autocmd! User GoyoEnter nested call <SID>goyo_enter()
+  autocmd! User GoyoLeave nested call <SID>goyo_leave()
+]])

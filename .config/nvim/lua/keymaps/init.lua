@@ -3,9 +3,10 @@
 -- vim.cmd("autocmd VimLeave * silent !setxkbmap es && xmodmap -e 'keycode 107 = Super_L'")
 -- vim.g.mapleader = " "
 vim.g.mapleader = "ñ"
--- Search forward with '-' and mark the original place to mark "s" so you can go back with 's
-vim.api.nvim_set_keymap("n", "-", "ms/", { noremap = true, silent = false })
-vim.api.nvim_set_keymap("o", "-", "ms/", { noremap = true, silent = false })
+-- Search and mark the original place to mark "s" so you can go back with 's
+-- You can change "/" and "?" with other keys if you want
+vim.api.nvim_set_keymap("n", "/", "ms/", { noremap = true, silent = false })
+vim.api.nvim_set_keymap("o", "/", "ms/", { noremap = true, silent = false })
 vim.api.nvim_set_keymap("n", "?", "ms?", { noremap = true, silent = false })
 vim.api.nvim_set_keymap("o", "?", "ms?", { noremap = true, silent = false })
 -- Center search term when found
@@ -71,11 +72,11 @@ vim.api.nvim_set_keymap("v", ">", ">gv", { noremap = false, silent = false })
 -- Switch between current and last buffer
 vim.api.nvim_set_keymap("n", "<leader>l", "<c-^>", { noremap = false, silent = false })
 -- Buffer cycling with Tab
--- vim.api.nvim_set_keymap("n", "<Tab>", ":bnext<CR>", { noremap = true, silent = true })
--- vim.api.nvim_set_keymap("n", "<S-Tab>", ":bprevious<CR>", { noremap = true, silent = false })
+vim.api.nvim_set_keymap("n", "<Tab>", ":bnext<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<S-Tab>", ":bprevious<CR>", { noremap = true, silent = false })
 -- Buffer cycling with Tab and don't return to the deleted buffer
-vim.api.nvim_set_keymap("n", "<Tab>", ":<c-u>exe v:count ? v:count . 'b' : 'b' . (bufloaded(0) ? '#' : 'n')<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<S-Tab>", ":<c-u>exe v:count ? v:count . 'b' : 'b' . (bufloaded(0) ? '#' : 'p')<cr>", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("n", "<Tab>", ":<c-u>exe v:count ? v:count . 'b' : 'b' . (bufloaded(0) ? '#' : 'n')<cr>", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("n", "<S-Tab>", ":<c-u>exe v:count ? v:count . 'b' : 'b' . (bufloaded(0) ? '#' : 'p')<cr>", { noremap = true, silent = true })
 -- Close the buffer but keep the window
 vim.api.nvim_set_keymap("n", "<leader>q", ":ene<CR>:bw #<CR>", { noremap = false, silent = false })
 

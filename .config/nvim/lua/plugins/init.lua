@@ -1,9 +1,15 @@
 return require("packer").startup(function()
 	-- Packer can manage itself
 	use("dracula/vim")
-	use("romainl/vim-dichromatic")
+	use("preservim/vim-colors-pencil")
+	use({
+		"nvim-lualine/lualine.nvim",
+		requires = { "kyazdani42/nvim-web-devicons", opt = true },
+	})
 	use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
 	use("neovim/nvim-lspconfig") -- Collection of configurations for the built-in LSP client
+	use("nvim-lua/lsp-status.nvim") -- LSP functions for the status line (e.g. lualine)
+	use("arkav/lualine-lsp-progress") -- And yet another plugin for the lualine
 	use("mhartington/formatter.nvim")
 
 	-- Snippets
@@ -110,4 +116,8 @@ return require("packer").startup(function()
 			{ "nvim-lua/plenary.nvim" },
 		},
 	})
+
+	-- Writer plugins
+	use("junegunn/goyo.vim")
+	use("preservim/vim-markdown")
 end)

@@ -253,6 +253,49 @@ require("telescope").setup({
 require("telescope").load_extension("fzf")
 
 -------------------------------------------------------------------------
+-------------------------------- LUALINE --------------------------------
+-------------------------------------------------------------------------
+local function window()
+	return " " .. vim.api.nvim_win_get_number(0)
+end
+
+require("lualine").setup({
+	options = {
+		icons_enabled = true,
+		theme = "auto",
+		component_separators = "",
+		section_separators = "",
+		disabled_filetypes = {},
+		always_divide_middle = true,
+		globalstatus = false,
+	},
+	sections = {
+		lualine_a = { "mode" },
+		lualine_b = { "branch", "diff", "diagnostics" },
+		lualine_c = {
+			window,
+			{ "filename", path = 1, symbols = { modified = " ", readonly = " ", unnamed = "NEW FILE " } },
+		},
+		lualine_x = { "lsp_progress", "require'lsp-status'.status()" },
+		lualine_y = { "encoding", "fileformat", "filetype" },
+		lualine_z = { "progress", "location" },
+	},
+	inactive_sections = {
+		lualine_a = {},
+		lualine_b = {},
+		lualine_c = {
+			window,
+			{ "filename", path = 1, symbols = { modified = " ", readonly = " ", unnamed = "NEW FILE " } },
+		},
+		lualine_x = {},
+		lualine_y = {},
+		lualine_z = { "location" },
+	},
+	tabline = {},
+	extensions = {},
+})
+
+-------------------------------------------------------------------------
 -------------------------------- OTHERS --------------------------------
 -------------------------------------------------------------------------
 require("Comment").setup({
