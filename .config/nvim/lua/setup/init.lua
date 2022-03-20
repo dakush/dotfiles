@@ -1,5 +1,7 @@
+require('impatient')
+
 -- Installed language servers
-local servers = { "tsserver", "pyright", "bashls", "html", "cssls" }
+local servers = { "clangd", "tsserver", "jsonls", "pyright", "bashls", "html", "cssls" }
 
 -------------------------------------------------------------------------
 -------------------------------  TREESITTER -----------------------------

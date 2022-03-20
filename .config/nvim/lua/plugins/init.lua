@@ -1,5 +1,12 @@
 return require("packer").startup(function()
 	-- Packer can manage itself
+	use("wbthomason/packer.nvim")
+
+	-- Speed up the startup time
+	use("lewis6991/impatient.nvim")
+
+	-- Filetype plugin, 175x faster than original
+	use({ "nathom/filetype.nvim" })
 	use("dracula/vim")
 	use("preservim/vim-colors-pencil")
 	use({
