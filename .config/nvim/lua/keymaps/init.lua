@@ -25,6 +25,13 @@ vim.opt.pastetoggle = "<leader>p"
 -- Yank to system clipboard even over SSH
 -- After selecting something in visual mode:
 vim.api.nvim_set_keymap("v", "<leader>y", ":OSCYank<CR>", { noremap = true, silent = false })
+-- As an operator, e.g. <leader>o_  = copy the current line, <leader>oip = copy the inner paragraph
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>o",
+	[[ OSCYankOperator('') ]],
+	{ noremap = false, silent = true, expr = true }
+)
 
 -- Double space over word to find and replace
 vim.api.nvim_set_keymap(
@@ -63,7 +70,7 @@ vim.api.nvim_set_keymap("x", "p", '""p:let @"=@0<CR>', { noremap = true, silent 
 --	end
 --end
 
--- Toggle cursor line 
+-- Toggle cursor line
 vim.api.nvim_set_keymap("n", "<leader>cl", ":set cursorline!<cr>", { noremap = true, silent = false })
 -- Toggle show white characters
 vim.api.nvim_set_keymap("n", "<leader>b", ":set list!<cr>", { noremap = true, silent = true })
