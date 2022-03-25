@@ -22,6 +22,9 @@ vim.api.nvim_set_keymap("n", "<C-i>", "<C-i>zz", { noremap = true, silent = true
 
 -- Paste mode
 vim.opt.pastetoggle = "<leader>p"
+-- Yank to system clipboard even over SSH
+-- After selecting something in visual mode:
+vim.api.nvim_set_keymap("v", "<leader>y", ":OSCYank<CR>", { noremap = true, silent = false })
 
 -- Double space over word to find and replace
 vim.api.nvim_set_keymap(

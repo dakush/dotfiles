@@ -127,4 +127,6 @@ return require("packer").startup(function()
 	-- Writer plugins
 	use("junegunn/goyo.vim")
 	use("preservim/vim-markdown")
+
+	use({ "ojroques/vim-oscyank", branch = "main" })
 end)
