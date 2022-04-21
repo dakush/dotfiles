@@ -146,7 +146,7 @@ vim.opt.foldenable = false -- don't fold by default
 vim.opt.foldlevel = 1
 
 -- Misc
--- vim.opt.laststatus = 3 -- Global statusline (i.e. not 1 statusline per buffer)
+vim.opt.laststatus = 3 -- Global statusline (i.e. not 1 statusline per buffer)
 vim.opt.diffopt = vim.opt.diffopt + "vertical,iwhite,internal,algorithm:patience,hiddenoff"
 vim.opt.so = 7 -- set 7 lines to the cursor's when moving vertical
 vim.opt.wildmode = "longest:list,full" -- complete files like a shell
