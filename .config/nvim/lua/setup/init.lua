@@ -1,7 +1,10 @@
-require('impatient')
+require("impatient")
 
 -- Installed language servers
 local servers = { "clangd", "tsserver", "jsonls", "pyright", "bashls", "html", "cssls" }
+
+-- Smooth scroll
+require("neoscroll").setup()
 
 -------------------------------------------------------------------------
 -------------------------------  TREESITTER -----------------------------

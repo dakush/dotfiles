@@ -1,27 +1,27 @@
 -- Disable some builtin vim plugins
 local disabled_built_ins = {
-  "2html_plugin",
-  "getscript",
-  "getscriptPlugin",
-  "gzip",
-  "logipat",
-  "netrw",
-  "netrwPlugin",
-  "netrwSettings",
-  "netrwFileHandlers",
-  "matchit",
-  "matchparen",
-  "tar",
-  "tarPlugin",
-  "rrhelper",
-  "vimball",
-  "vimballPlugin",
-  "zip",
-  "zipPlugin",
+	"2html_plugin",
+	"getscript",
+	"getscriptPlugin",
+	"gzip",
+	"logipat",
+	"netrw",
+	"netrwPlugin",
+	"netrwSettings",
+	"netrwFileHandlers",
+	"matchit",
+	"matchparen",
+	"tar",
+	"tarPlugin",
+	"rrhelper",
+	"vimball",
+	"vimballPlugin",
+	"zip",
+	"zipPlugin",
 }
 
 for _, plugin in pairs(disabled_built_ins) do
-  vim.g["loaded_" .. plugin] = 1
+	vim.g["loaded_" .. plugin] = 1
 end
 
 require("plugins")
@@ -57,17 +57,28 @@ vim.opt.listchars = {
 	precedes = "❮",
 }
 
+local configtweaks = vim.api.nvim_create_augroup("ConfigTweaks", { clear = true })
 -- Automatically resize panes on resize
-vim.cmd([[
-  augroup configgroup
-    autocmd!
-    autocmd VimResized * exe 'normal! \<c-w>='
-    autocmd BufWritePost .vimrc,.vimrc.local,init.vim source %
-    autocmd BufWritePost .vimrc.local source %
-    autocmd FileType qf wincmd J
-    autocmd FileType qf nmap <buffer> q :q<cr>
-  augroup END
-]])
+vim.api.nvim_create_autocmd(
+	{ "VimResized" },
+	{ pattern = { "*", "exe" }, command = "normal! <c-w>=", group = configtweaks }
+)
+-- Some quickfix window tweaks
+vim.api.nvim_create_autocmd("FileType", { pattern = { "qf" }, command = "wincmd J", group = configtweaks })
+vim.api.nvim_create_autocmd(
+	{ "FileType" },
+	{ pattern = { "qf" }, command = "nmap <buffer> q :q<cr>", group = configtweaks }
+)
+-- vim.cmd([[
+--   augroup configgroup
+--     autocmd!
+--     autocmd VimResized * exe 'normal! \<c-w>='
+--     autocmd BufWritePost .vimrc,.vimrc.local,init.vim source %
+--     autocmd BufWritePost .vimrc.local source %
+--     autocmd FileType qf wincmd J
+--     autocmd FileType qf nmap <buffer> q :q<cr>
+--   augroup END
+-- ]])
 
 -------------------------------------------------------------------------------
 --------------------------------- VARIABLES -----------------------------------
@@ -87,7 +98,8 @@ vim.opt.textwidth = 120
 vim.opt.list = false
 
 -- Disable spell checking
-vim.cmd([[ autocmd BufEnter,BufRead,BufNewFile * set nospell ]])
+vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufNewfile" }, { pattern = { "*" }, command = "set nospell" })
+-- vim.cmd([[ autocmd BufEnter,BufRead,BufNewFile * set nospell ]])
 
 vim.opt.backspace = "indent,eol,start" -- make backspace behave in a sane manner
 -- Yank to the system clipboard
@@ -114,14 +126,15 @@ vim.opt.tm = 500
 -- Set relative line numbers except when in insert mode or when the buffer loses focus
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.cmd([[
-  augroup numbertoggle
-    autocmd!
-    autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
-    autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
-  augroup END
-]])
-
+local numbertoggle = vim.api.nvim_create_augroup("NumberToggle", { clear = true })
+vim.api.nvim_create_autocmd(
+	{ "BufEnter", "FocusGained", "InsertLeave", "WinEnter" },
+	{ pattern = { "*" }, command = [[ if &nu && mode() != "i" | set rnu | endif ]], group = numbertoggle }
+)
+vim.api.nvim_create_autocmd(
+	{ "BufLeave", "FocusLost", "InsertEnter", "WinLeave" },
+	{ pattern = { "*" }, command = [[ if &nu | set nornu | endif ]], group = numbertoggle }
+)
 -- Wrap lines
 vim.opt.wrap = true -- turn on line wrapping
 vim.opt.wrapmargin = 8 -- wrap lines when coming within n characters from side
@@ -158,19 +171,25 @@ vim.opt.nrformats = "" -- Don't increment/decrement numbers with keybinds
 --vim.cmd([[match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$']])
 
 -- Disables automatic commenting on newline
-vim.cmd("autocmd BufNewFile,BufRead * setlocal formatoptions-=cro")
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, { pattern = { "*" }, command = "setlocal formatoptions-=cro" })
+-- vim.cmd("autocmd BufNewFile,BufRead * setlocal formatoptions-=cro")
 
 -- Required by nvim-cmp plugin for completion
 vim.opt.completeopt = "menu,menuone,noselect"
 
 -- Writer mode in and out
 -- Markdown in and out to have vim-markdown plugin concealing "markdown codes"
-vim.cmd([[
-  augroup markdown
-    autocmd!
-    autocmd FileType markdown setlocal conceallevel=2
-  augroup END
-]])
+local markdown = vim.api.nvim_create_augroup("Markdown", { clear = true })
+vim.api.nvim_create_autocmd(
+	{ "FileType" },
+	{ pattern = { "markdown" }, command = "setlocal conceallevel=2", group = markdown }
+)
+-- vim.cmd([[
+--   augroup markdown
+--     autocmd!
+--     autocmd FileType markdown setlocal conceallevel=2
+--   augroup END
+-- ]])
 
 -- Goyo in and out
 vim.g.goyo_width = 70

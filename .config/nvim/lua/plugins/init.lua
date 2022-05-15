@@ -5,6 +5,8 @@ return require("packer").startup(function()
 	-- Speed up the startup time
 	use("lewis6991/impatient.nvim")
 
+	-- Smooth scroll
+	use("karb94/neoscroll.nvim")
 	-- Filetype plugin, 175x faster than original
 	use({ "nathom/filetype.nvim" })
 	use("dracula/vim")
