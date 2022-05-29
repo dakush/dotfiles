@@ -21,33 +21,17 @@ return require("packer").startup(function()
 	use("arkav/lualine-lsp-progress") -- And yet another plugin for the lualine
 	use("mhartington/formatter.nvim")
 
-	-- Snippets
-	use("L3MON4D3/LuaSnip")
-	use("rafamadriz/friendly-snippets")
-
 	-- Completion
 	use("hrsh7th/cmp-nvim-lsp")
 	use("hrsh7th/cmp-buffer")
 	use("hrsh7th/cmp-path")
 	use("hrsh7th/cmp-cmdline")
-	use({
-		"hrsh7th/nvim-cmp",
-		config = function()
-			require("cmp").setup({
-				snippet = {
-					expand = function(args)
-						require("luasnip").lsp_expand(args.body)
-					end,
-				},
+	use("hrsh7th/nvim-cmp")
 
-				sources = {
-					{ name = "luasnip" },
-					-- more sources
-				},
-			})
-		end,
-	})
+	-- Snippets
+	use("L3MON4D3/LuaSnip")
 	use("saadparwaiz1/cmp_luasnip")
+	use("rafamadriz/friendly-snippets")
 
 	-- Dim unused variables
 	use({

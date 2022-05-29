@@ -24,17 +24,23 @@ require("nvim-treesitter.configs").setup({
 -------------------------------------------------------------------------
 -----------------------------------  LSP --------------------------------
 -------------------------------------------------------------------------
-for _, lsp in pairs(servers) do
-	require("lspconfig")[lsp].setup({
+---- Add additional capabilities supported by nvim-cmp
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
+
+local lspconfig = require("lspconfig")
+for _, lsp in ipairs(servers) do
+	lspconfig[lsp].setup({
 		on_attach = on_attach,
-		flags = {
-			-- This will be the default in neovim 0.7+
-			debounce_text_changes = 150,
-		},
+		capabilities = capabilities,
+		-- flags = {
+		-- This will be the default in neovim 0.7+
+		-- debounce_text_changes = 150,
+		-- },
 	})
 end
+
 --Enable (broadcasting) snippet capability for completion with html and CSS LSP servers
-local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 require("lspconfig").html.setup({
 	capabilities = capabilities,
@@ -46,9 +52,42 @@ require("lspconfig").cssls.setup({
 -------------------------------------------------------------------------
 ----------------------------- FORMATTER ---------------------------------
 -------------------------------------------------------------------------
+-- Utilities for creating configurations
+local util = require("formatter.util")
+
 require("formatter").setup({
 	filetype = {
+		-- Pick from defaults:
 		javascript = {
+			require("formatter.filetypes.javascript").prettier,
+		},
+		json = {
+			require("formatter.filetypes.json").prettier,
+		},
+		typescript = {
+			require("formatter.filetypes.typescript").prettier,
+		},
+		html = {
+			require("formatter.filetypes.html").prettier,
+		},
+		css = {
+			require("formatter.filetypes.css").prettier,
+		},
+		lua = {
+			require("formatter.filetypes.lua").stylua,
+		},
+		sh = {
+			-- Shell Script Formatter
+			function()
+				return {
+					exe = "shfmt",
+					-- indent switch cases, simplify the code, indent with 4 spaces, dialect=bash
+					args = { "-ci", "-s", "-i", 4, "-ln", "bash" },
+					stdin = true,
+				}
+			end,
+		},
+		--[[ javascript = {
 			-- prettier
 			function()
 				return {
@@ -67,16 +106,6 @@ require("formatter").setup({
 				}
 			end,
 		},
-		sh = {
-			-- Shell Script Formatter
-			function()
-				return {
-					exe = "shfmt",
-					args = { "-i", 2 },
-					stdin = true,
-				}
-			end,
-		},
 		lua = {
 			function()
 				return {
@@ -88,47 +117,54 @@ require("formatter").setup({
 					stdin = true,
 				}
 			end,
-		},
+		}, ]]
 	},
 })
 
 -------------------------------------------------------------------------
 -------------------------------- COMPLETION -----------------------------
 -------------------------------------------------------------------------
+-- local has_words_before = function()
+-- 	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+-- 	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+-- end
 local has_words_before = function()
 	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
 	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 end
 local luasnip = require("luasnip")
 local cmp = require("cmp")
+
 cmp.setup({
 	snippet = {
 		-- REQUIRED - you must specify a snippet engine
 		expand = function(args)
-			-- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-			require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
-			-- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-			-- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+			luasnip.lsp_expand(args.body) -- For `luasnip` users.
 		end,
 	},
+	window = {
+		-- completion = cmp.config.window.bordered(),
+		-- documentation = cmp.config.window.bordered(),
+	},
 	mapping = {
-		["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
-		["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
-		["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
-		["<C-y>"] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
-		["<C-e>"] = cmp.mapping({
-			i = cmp.mapping.abort(),
-			c = cmp.mapping.close(),
-		}),
+		["<C-b>"] = cmp.mapping.scroll_docs(-4),
+		["<C-f>"] = cmp.mapping.scroll_docs(4),
+		["<C-Space>"] = cmp.mapping.complete(),
+		["<C-e>"] = cmp.mapping.abort(),
+		-- ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
+		-- ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
+		-- ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
+		-- ["<C-y>"] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+		-- ["<C-e>"] = cmp.mapping({
+		-- 	i = cmp.mapping.abort(),
+		-- 	c = cmp.mapping.close(),
+		-- }),
 		["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-
-		["<Tab>"] = cmp.mapping(function(fallback)
+		--[[ ["<Tab>"] = cmp.mapping(function(fallback)
 			if cmp.visible() then
 				cmp.select_next_item()
 			elseif luasnip.expand_or_jumpable() then
 				luasnip.expand_or_jump()
-			elseif has_words_before() then
-				cmp.complete()
 			else
 				fallback()
 			end
@@ -141,50 +177,62 @@ cmp.setup({
 			else
 				fallback()
 			end
+		end, { "i", "s" }), ]]
+		-- Super-tab behaviour (from nvim-cmp wiki)
+		["<Tab>"] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				cmp.select_next_item()
+			elseif luasnip.expand_or_jumpable() then
+				luasnip.expand_or_jump()
+			elseif has_words_before() then
+				cmp.complete()
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+
+		["<S-Tab>"] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				cmp.select_prev_item()
+			elseif luasnip.jumpable(-1) then
+				luasnip.jump(-1)
+			else
+				fallback()
+			end
 		end, { "i", "s" }),
 	},
 	sources = cmp.config.sources({
 		{ name = "nvim_lsp" },
-		-- { name = 'vsnip' }, -- For vsnip users.
 		{ name = "luasnip" }, -- For luasnip users.
-		-- { name = 'ultisnips' }, -- For ultisnips users.
-		-- { name = 'snippy' }, -- For snippy users.
-	}, {
 		{ name = "buffer" },
+		{ name = "path" },
 	}),
 })
 
 -- Set configuration for specific filetype.
-require("cmp").setup.filetype("gitcommit", {
-	sources = cmp.config.sources({
-		{ name = "cmp_git" }, -- You can specify the `cmp_git` source if you were installed it.
-	}, {
-		{ name = "buffer" },
-	}),
-})
+-- cmp.setup.filetype("gitcommit", {
+-- 	sources = cmp.config.sources({
+-- 		{ name = "buffer" },
+-- 	}),
+-- })
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-require("cmp").setup.cmdline("/", {
+cmp.setup.cmdline("/", {
+	mapping = cmp.mapping.preset.cmdline(),
 	sources = {
 		{ name = "buffer" },
 	},
 })
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-require("cmp").setup.cmdline(":", {
+cmp.setup.cmdline(":", {
+	mapping = cmp.mapping.preset.cmdline(),
 	sources = cmp.config.sources({
 		{ name = "path" },
 	}, {
 		{ name = "cmdline" },
 	}),
 })
-
--- Setup lspconfig with completion
-for _, lsp in pairs(servers) do
-	require("lspconfig")[lsp].setup({
-		capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities()),
-	})
-end
 
 -------------------------------------------------------------------------
 -------------------------------- LUASNIP --------------------------------

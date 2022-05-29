@@ -1,7 +1,3 @@
--- Change keyboard layout when entering/exiting neovim + make ImpPt a second Super key
--- vim.cmd("autocmd VimEnter * silent !setxkbmap us && xmodmap -e 'keycode 107 = Super_L'")
--- vim.cmd("autocmd VimLeave * silent !setxkbmap es && xmodmap -e 'keycode 107 = Super_L'")
--- vim.g.mapleader = " "
 vim.g.mapleader = "ñ"
 -- Search and mark the original place to mark "s" so you can go back with 's
 -- You can change "/" and "?" with other keys if you want
@@ -44,31 +40,11 @@ vim.keymap.set("n", '"c', "_c", { noremap = true, silent = false })
 vim.keymap.set("n", '"C', "_C", { noremap = true, silent = false })
 -- Avoid to overwrite the register when using visual mode to replace chunks of text
 vim.keymap.set("x", "p", '""p:let @"=@0<CR>', { noremap = true, silent = true })
--- If the popup menu is visible, C-j C-k move up and down; if not, they do their usual action
--- In lua _G is the global table that holds all the global variables.
--- It's not strictly necessary but I'm using it to make it clear that I'm creating a global function on purpose.
---vim.keymap.set("i", "<C-k>", "v:lua.smartPopupNavigation", { noremap = true, expr = true })
---_G.smartPopupNavigation = function()
---	if vim.fn.pumvisible() == 1 then
---		-- we use "t" to return the code of <C-N>, not the string itself
---		return t("<C-N>")
---	else
---		return t("<C-j>")
---	end
---end
---vim.keymap.set("i", "<C-j>", "v:lua.smartPopupNavigation", { noremap = true, expr = true })
---_G.smartPopupNavigation = function()
---	if vim.fn.pumvisible() == 1 then
---		return t("<C-P>")
---	else
---		return t("<C-k>")
---	end
---end
 
 -- Toggle cursor line
 vim.keymap.set("n", "<leader>cl", ":set cursorline!<cr>", { noremap = true, silent = false })
 -- Toggle show white characters
-vim.keymap.set("n", "<leader>b", ":set list!<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>w", ":set list!<cr>", { noremap = true, silent = true })
 
 -- Keep visual selection when indenting/outdenting
 vim.keymap.set("v", "<", "<gv", { noremap = false, silent = false })

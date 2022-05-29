@@ -20,7 +20,7 @@ local disabled_built_ins = {
 	"zipPlugin",
 }
 
-for _, plugin in pairs(disabled_built_ins) do
+for _, plugin in ipairs(disabled_built_ins) do
 	vim.g["loaded_" .. plugin] = 1
 end
 
@@ -69,16 +69,6 @@ vim.api.nvim_create_autocmd(
 	{ "FileType" },
 	{ pattern = { "qf" }, command = "nmap <buffer> q :q<cr>", group = configtweaks }
 )
--- vim.cmd([[
---   augroup configgroup
---     autocmd!
---     autocmd VimResized * exe 'normal! \<c-w>='
---     autocmd BufWritePost .vimrc,.vimrc.local,init.vim source %
---     autocmd BufWritePost .vimrc.local source %
---     autocmd FileType qf wincmd J
---     autocmd FileType qf nmap <buffer> q :q<cr>
---   augroup END
--- ]])
 
 -------------------------------------------------------------------------------
 --------------------------------- VARIABLES -----------------------------------
@@ -99,7 +89,6 @@ vim.opt.list = false
 
 -- Disable spell checking
 vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufNewfile" }, { pattern = { "*" }, command = "set nospell" })
--- vim.cmd([[ autocmd BufEnter,BufRead,BufNewFile * set nospell ]])
 
 vim.opt.backspace = "indent,eol,start" -- make backspace behave in a sane manner
 -- Yank to the system clipboard
@@ -141,7 +130,7 @@ vim.opt.wrapmargin = 8 -- wrap lines when coming within n characters from side
 vim.opt.linebreak = true -- vim.opt.soft wrapping
 vim.opt.breakindent = true -- indent wrapped lines
 vim.opt.breakindentopt = "shift:2" -- indent is 2x regular indent
-vim.opt.showbreak = "❯❯ " -- show ellipsis at breaking
+vim.opt.showbreak = "❯❯" -- show ellipsis at breaking
 -- vim.opt.showbreak = "…" -- show ellipsis at breaking
 
 -- Tab control
@@ -184,12 +173,6 @@ vim.api.nvim_create_autocmd(
 	{ "FileType" },
 	{ pattern = { "markdown" }, command = "setlocal conceallevel=2", group = markdown }
 )
--- vim.cmd([[
---   augroup markdown
---     autocmd!
---     autocmd FileType markdown setlocal conceallevel=2
---   augroup END
--- ]])
 
 -- Goyo in and out
 vim.g.goyo_width = 70
